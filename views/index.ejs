@@ -6,15 +6,45 @@
     </head>
     <body>
         <h2>WebSocket Chat App</h2>
-        <form action="" method="POST">
+        <!-- <form action="" method="POST"> -->
+        <form id="chat-form">
             <ul>
                 <li>
-                    <input type="text" id="message" name="msg" required>
+                    <input type="text" id="message" name="msg" required autofocus autocomplete="off">
                 </li>
                 <li class="button">
-                    <button type="submit">Send</button>
+                    <button type="button">Send</button>
                 </li>
             </ul>
         </form>
+        <!-- The script will move to a separate file. -->
+        <script>
+            const ws=new WebSocket("ws:localhost:8181");
+
+            ws.onopen=event=>{
+                console.log('Connection to server opened.');
+            }
+
+            let formElement=document.forms.namedItem('chat-form');
+            // const formElement=document.querySelector('#chat-form');//Use this instead but with a better selector.
+            formElement.addEventListener('submit', e=> {
+                e.preventDefault();//Is this necessary?
+                const formData=new FormData(formElement);
+                if(ws.readyState==WebSocket.OPEN){
+                    ws.send(JSON.stringify({
+                        message: formData.get('msg')
+                    }));
+                }
+                formElement.reset();//Either this or set empty string on the value.
+                //messageField.focus()?
+                //https://developer.mozilla.org/en-US/docs/Web/API/HTMLOrForeignElement/focus
+                //Implement this if needed.
+            });
+
+            ws.onmessage=event=> {
+                const data=JSON.parse(event.data);
+                console.log(data);
+            }
+        </script>
     </body>
 </html>
