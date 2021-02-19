@@ -1,8 +1,25 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    background-color: gainsboro;
+    width: 330;
+    /* border: 1px solid black; */
+}
+ul {
+    list-style: none;
 }
 
-a {
-  color: #00B7FF;
+.wrapper ul, form {
+    /* border: 1px solid gray; */
+    border-radius: 5px;
+    background-color: whitesmoke;
+}
+
+form {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+.wrapper ul {
+    height: 200px;
+    overflow-y: scroll;
+    padding-bottom: 10px;
 }

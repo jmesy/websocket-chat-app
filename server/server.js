@@ -31,7 +31,8 @@ let clientIndex=1;
 
 wss.on('connection', ws=> {
     const clientUuid=uuid.v4();
-    let nickname='Anonymous'+clientIndex;
+    // let nickname='Anonymous'+clientIndex;
+    let nickname=clientUuid.substring(0, 8);
     clientIndex+=1;
     clients.push({//Have a subobject to send via weSend.//This object should be made available locally.
         id: clientUuid,
