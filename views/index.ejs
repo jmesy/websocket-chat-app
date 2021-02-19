@@ -19,7 +19,7 @@
                     <!--  -->
                 </ul>
             </div>
-            <form id="chat-form">
+            <form class="chat-form">
                 <ul>
                     <li>
                         <input
@@ -45,8 +45,7 @@
                 console.log('Connection to server opened.');
             };
 
-            let formElement = document.forms.namedItem('chat-form');
-            // const formElement=document.querySelector('#chat-form');//Use this instead but with a better selector.
+            const formElement=document.querySelector('.chat-form');
             formElement.addEventListener('submit', (e) => {
                 e.preventDefault(); //Is this necessary?
                 const formData = new FormData(formElement);
@@ -59,8 +58,6 @@
                 }
                 formElement.reset(); //Either this or set empty string on the value.
                 //messageField.focus()?
-                //https://developer.mozilla.org/en-US/docs/Web/API/HTMLOrForeignElement/focus
-                //Implement this if needed.
             });
 
 
@@ -69,6 +66,10 @@
             const appendMessage=function(data){
                 liElementClone=liElement.cloneNode(true);
                 for(const property in data.props){
+                    if(data.type!='message'){//Skip nick for service messages.
+                        if(property=='nickname')
+                            continue;
+                    }
                     liElementClone
                         .querySelector(`.component .${property}`)
                         .textContent=data.props[property];
