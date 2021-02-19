@@ -15,9 +15,13 @@ function wsSend(type, clientUuid, nickname, message){
         if(clientSocket.readyState===WebSocket.OPEN){//Send message to all available clients.
             clientSocket.send(JSON.stringify({
                 type: type,
-                id: clientUuid,//Message is related to this client.
-                nickname: nickname,
-                message: message
+                id: clientUuid.substr(0, 8),//Message is related to this client.
+                // nickname: nickname,
+                // message: message
+                props: {
+                    nickname: nickname,
+                    message: message
+                }
             }));
         }
     }
