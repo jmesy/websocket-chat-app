@@ -10,14 +10,12 @@ const uuid=require('uuid');
 const clients=[];
 
 function wsSend(type, clientUuid, nickname, message){
-    for(let i=0; i<clients.length; ++i){//No point in for/of as it creates another variable ans is less readable.
+    for(let i=0; i<clients.length; ++i){//No point in for/of as it creates another variable and is less readable.
         const clientSocket=clients[i].ws;
         if(clientSocket.readyState===WebSocket.OPEN){//Send message to all available clients.
             clientSocket.send(JSON.stringify({
                 type: type,
                 id: clientUuid.substr(0, 8),//Message is related to this client.
-                // nickname: nickname,
-                // message: message
                 props: {
                     nickname: nickname,
                     message: message

@@ -57,8 +57,8 @@
             };
 
             const formElement=document.querySelector('.chat-form');
-            formElement.addEventListener('submit', (e) => {
-                e.preventDefault(); //Is this necessary?
+            formElement.addEventListener('submit', (event) => {
+                event.preventDefault();//What is this preventing exactly?
                 const formData = new FormData(formElement);
                 if (ws.readyState == WebSocket.OPEN) {
                     ws.send(
@@ -71,13 +71,13 @@
                 //messageField.focus()?
             });
 
-
             //Append incoming messages.
             const liElement=document.querySelector('.component');
+            const ulElement=document.querySelector('.wrapper ul');
             const appendMessage=function(data){
                 liElementClone=liElement.cloneNode(true);
                 for(const property in data.props){
-                    if(data.type!='message'){//Skip nick for service messages.
+                    if(data.type!='message'){//Skip nickname for service messages.
                         if(property=='nickname')
                             continue;
                     }
@@ -85,10 +85,6 @@
                         .querySelector(`.component .${property}`)
                         .textContent=data.props[property];
                 }
-                // document
-                //     .querySelector(`.wrapper ul`)
-                //     .appendChild(liElementClone);
-                const ulElement=document.querySelector('.wrapper ul');
                 ulElement.appendChild(liElementClone);
                 ulElement.scrollTop=ulElement.scrollHeight;
             }
