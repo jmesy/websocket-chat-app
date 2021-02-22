@@ -93,6 +93,10 @@
                 const data = JSON.parse(event.data);
                 appendMessage(data);
             };
+
+            ws.onclose=(event)=> {
+                
+            }
         </script>
     </body>
 </html>
