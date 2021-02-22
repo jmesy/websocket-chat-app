@@ -50,53 +50,64 @@
         </div>
         <!-- The script will move to a separate file. -->
         <script>
-            const ws = new WebSocket('ws:localhost:8080');
-
-            ws.onopen = (event) => {
-                console.log('Connection to server opened.');
-            };
-
+            //Append incoming messages.
+            //This is outside of startServer not to append the event listener twice.
             const formElement=document.querySelector('.chat-form');
             formElement.addEventListener('submit', (event) => {
                 event.preventDefault();//What is this preventing exactly?
                 const formData = new FormData(formElement);
-                if (ws.readyState == WebSocket.OPEN) {
-                    ws.send(
-                        JSON.stringify({
-                            message: formData.get('msg'),
-                        })
-                    );
+                if(ws){
+                    if (ws.readyState == WebSocket.OPEN) {
+                        ws.send(
+                            JSON.stringify({
+                                message: formData.get('msg'),
+                            })
+                        );
+                    }
                 }
                 formElement.reset(); //Either this or set empty string on the value.
                 //messageField.focus()?
             });
 
-            //Append incoming messages.
-            const liElement=document.querySelector('.component');
-            const ulElement=document.querySelector('.wrapper ul');
-            const appendMessage=function(data){
-                liElementClone=liElement.cloneNode(true);
-                for(const property in data.props){
-                    if(data.type!='message'){//Skip nickname for service messages.
-                        if(property=='nickname')
-                            continue;
+            let ws=null;
+            const startServer=()=>{
+                ws = new WebSocket('ws:localhost:8080');
+                ws.onopen = (event) => {
+                    console.log('Connection to server opened.');
+                };
+
+                const liElement=document.querySelector('.component');
+                const ulElement=document.querySelector('.wrapper ul');
+                const appendMessage=function(data){
+                    liElementClone=liElement.cloneNode(true);
+                    for(const property in data.props){
+                        if(data.type!='message'){//Skip nickname for service messages.
+                            if(property=='nickname')
+                                continue;
+                        }
+                        liElementClone
+                            .querySelector(`.component .${property}`)
+                            .textContent=data.props[property];
                     }
-                    liElementClone
-                        .querySelector(`.component .${property}`)
-                        .textContent=data.props[property];
+                    ulElement.appendChild(liElementClone);
+                    ulElement.scrollTop=ulElement.scrollHeight;
                 }
-                ulElement.appendChild(liElementClone);
-                ulElement.scrollTop=ulElement.scrollHeight;
-            }
 
-            ws.onmessage = (event) => {
-                const data = JSON.parse(event.data);
-                appendMessage(data);
-            };
+                ws.onmessage = (event) => {
+                    const data = JSON.parse(event.data);
+                    appendMessage(data);
+                };
 
-            ws.onclose=(event)=> {
-                
+                //Try to reconnect if the server is down.
+                let timeoutID=null;
+                ws.onclose=(event)=> {
+                    console.log('Server is down.');
+                    timeoutID=setTimeout(()=>{
+                        startServer();
+                    }, 2000);
+                }
             }
+            startServer();
         </script>
     </body>
 </html>
