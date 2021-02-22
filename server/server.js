@@ -102,13 +102,13 @@ wss.on('connection', ws=> {
 
     ws.on('close', ()=> {
         const disconnectMessage=`${nickname} has left the chat.`;
-        delete clients[clientUuid];
         wsSend({
             type: 'notification',
             id: clientUuid,
             nickname: clients[clientUuid].nickname,
             message: disconnectMessage
         });
+        delete clients[clientUuid];
     })
 });
 
